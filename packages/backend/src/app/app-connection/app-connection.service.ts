@@ -31,45 +31,40 @@ type GetOneParams = {
     name: string
 }
 
+type ValidateConnectionValueParams = {
+    connection: UpsertConnectionRequest
+}
+
 const appConnectionRepo = databaseConnection.getRepository(AppConnectionEntity)
 
 export const appConnectionService = {
     async upsert({ projectId, request }: { projectId: ProjectId, request: UpsertConnectionRequest }): Promise<AppConnection> {
-        let response: Record<string, unknown> = request.value
-        switch (request.value.type) {
-            case AppConnectionType.CLOUD_OAUTH2:
-                response = await claimWithCloud({
-                    pieceName: request.appName,
-                    code: request.value.code,
-                    clientId: request.value.client_id,
-                    tokenUrl: request.value.token_url!,
-                    edition: await getEdition(),
-                    authorizationMethod: request.value.authorization_method!,
-                    codeVerifier: request.value.code_challenge!,
-                })
-                break
-            case AppConnectionType.OAUTH2:
-                response = await claim({
-                    clientSecret: request.value.client_secret,
-                    clientId: request.value.client_id,
-                    tokenUrl: request.value.token_url,
-                    redirectUrl: request.value.redirect_url,
-                    code: request.value.code,
-                    authorizationMethod: request.value.authorization_method,
-                    codeVerifier: request.value.code_challenge!,
-                })
-                break
-            default:
-                break
-        }
-        const claimedUpsertRequest = { ...request, value: { ...response, ...request.value }, id: apId(), projectId }
-        await appConnectionRepo.upsert({ ...claimedUpsertRequest, id: apId(), projectId: projectId, value: encryptObject(claimedUpsertRequest.value) }, ['name', 'projectId'])
-        const connection = await appConnectionRepo.findOneByOrFail({
-            projectId: projectId,
-            name: request.name,
+        const validatedConnectionValue = await validateConnectionValue({
+            connection: request,
         })
-        connection.value = decryptObject(connection.value)
-        return connection
+
+        const encryptedConnectionValue = encryptObject({
+            ...validatedConnectionValue,
+            ...request.value,
+        })
+
+        const connection = {
+            ...request,
+            value: encryptedConnectionValue,
+            id: apId(),
+            projectId,
+        }
+
+        await appConnectionRepo.upsert(connection, ['name', 'projectId'])
+
+        const updatedConnection = await appConnectionRepo.findOneByOrFail({
+            name: request.name,
+            projectId,
+        })
+
+        updatedConnection.value = decryptObject(updatedConnection.value)
+
+        return updatedConnection
     },
 
     async getOne({ projectId, name }: GetOneParams): Promise<AppConnection | null> {
@@ -162,6 +157,40 @@ export const appConnectionService = {
         const refreshConnections = await Promise.all(promises)
         return paginationHelper.createPage<AppConnection>(refreshConnections, cursor)
     },
+}
+
+const validateConnectionValue = async ({ connection }: ValidateConnectionValueParams): Promise<Record<string, unknown>> => {
+    switch (connection.value.type) {
+        case AppConnectionType.CLOUD_OAUTH2:
+            return await claimWithCloud({
+                pieceName: connection.appName,
+                code: connection.value.code,
+                clientId: connection.value.client_id,
+                tokenUrl: connection.value.token_url!,
+                edition: await getEdition(),
+                authorizationMethod: connection.value.authorization_method!,
+                codeVerifier: connection.value.code_challenge!,
+            })
+
+        case AppConnectionType.OAUTH2:
+            return await claim({
+                clientSecret: connection.value.client_secret,
+                clientId: connection.value.client_id,
+                tokenUrl: connection.value.token_url,
+                redirectUrl: connection.value.redirect_url,
+                code: connection.value.code,
+                authorizationMethod: connection.value.authorization_method,
+                codeVerifier: connection.value.code_challenge!,
+            })
+
+        case AppConnectionType.CUSTOM_AUTH:
+            break
+        case AppConnectionType.BASIC_AUTH:
+        case AppConnectionType.SECRET_TEXT:
+            break
+    }
+
+    return connection.value
 }
 
 async function refresh(connection: AppConnection): Promise<AppConnection> {
@@ -265,10 +294,10 @@ function mergeNonNull(appConnection: OAuth2ConnectionValueWithApp, oAuth2Respons
         obj[key as keyof BaseOAuth2ConnectionValue] = value
         return obj
     }, {})
-  
+
     return { ...appConnection, ...formattedOAuth2Response } as OAuth2ConnectionValueWithApp
 }
-  
+
 
 async function claim(request: {
     clientSecret: string
