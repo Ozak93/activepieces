@@ -35,7 +35,10 @@ export const postStatus = createAction({
                     required: true
                 })
             },
-            required: true
+            required: true,
+            validate() {
+                return
+            },
         }),
         status: Property.LongText({
             displayName: 'Status',

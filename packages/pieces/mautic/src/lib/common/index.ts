@@ -21,7 +21,10 @@ export const mauticCommon= {
                 required: true
             })
         },
-        required: true
+        required: true,
+        validate() {
+            return
+        },
     }),
     contactFields: getFields("contact"),
     companyFields: getFields("company"),

@@ -10,7 +10,7 @@ export const sendNotification = createAction({
             displayName: "Authentication",
             description: `
             To obtain a token:
-            
+
             1. Log in to your Ntfy instance.
             2. Click on Account
             3. Go under, on Access tokens and click on the button icon to copy your Token or CREATE ACCESS TOKEN if you do not have
@@ -30,6 +30,9 @@ export const sendNotification = createAction({
                 })
             },
             required: true,
+            validate() {
+                return
+            },
         }),
         topic: Property.ShortText({
             displayName: "Topic",

@@ -35,7 +35,10 @@ export const clockodoCommon = {
                 description: "A contact email for your company or app",
                 required: true,
             })
-        }
+        },
+        validate() {
+            return
+        },
     }),
     absenceType: (required = true) => Property.StaticDropdown({
         displayName: 'Type',

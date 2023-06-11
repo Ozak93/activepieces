@@ -12,6 +12,7 @@ export type CustomAuthPropertyValue<T extends CustomAuthProps> = StaticPropsValu
 
 export type CustomAuthPropertySchema<T> = BasePropertySchema & {
 	props: T
+    validate: (props: CustomAuthProps) => void
 }
 
 export type CustomAuthProperty<R extends boolean, T extends CustomAuthProps> = CustomAuthPropertySchema<T> & TPropertyValue<

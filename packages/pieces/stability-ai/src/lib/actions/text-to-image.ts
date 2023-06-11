@@ -20,6 +20,9 @@ export const textToImage = createAction({
         }),
       },
       required: true,
+      validate() {
+          return
+      },
     }),
     prompt: Property.ShortText({
       displayName: 'Prompt',

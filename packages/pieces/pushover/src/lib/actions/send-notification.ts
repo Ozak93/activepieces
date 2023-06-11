@@ -10,7 +10,7 @@ export const sendNotification = createAction({
             displayName: "Authentication",
             description: `
             To obtain the api token:
-            
+
             1. Log in to Pushover.
             2. Click on your Application or on Create an Application/API Token
             3. Copy the API Token/Key.
@@ -34,6 +34,9 @@ export const sendNotification = createAction({
                 }),
             },
             required: true,
+            validate() {
+                return
+            },
         }),
         title: Property.ShortText({
             displayName: "Title",

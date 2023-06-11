@@ -28,5 +28,8 @@ export const auth = Property.CustomAuth({
             required: true,
         })
     },
-    required: true
+    required: true,
+    validate() {
+        return
+    },
 })

@@ -36,6 +36,9 @@ export const newTicketInView = createTrigger({
                 }),
             },
             required: true,
+            validate() {
+                return
+            },
         }),
         view_id: Property.Dropdown({
             displayName: 'View',

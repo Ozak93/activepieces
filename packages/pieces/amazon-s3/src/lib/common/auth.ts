@@ -130,16 +130,19 @@ export const auth = Property.CustomAuth({
                       {
                         "label": "Middle East (UAE) [me-central-1]",
                         "value": "me-central-1"
-                      }                      
+                      }
                 ]
             },
             required: true,
         }),
-        
+
         bucket: Property.ShortText({
             displayName: 'Bucket',
             required: true,
         })
+    },
+    validate() {
+        return
     },
     required: true
 })

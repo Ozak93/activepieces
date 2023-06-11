@@ -28,7 +28,10 @@ export const pastebinCommon = {
                 displayName: 'Password',
                 required: false
             })
-        }
+        },
+        validate() {
+            return
+        },
     }),
     paste_format: (required = true) => Property.StaticDropdown({
         displayName: 'Format',

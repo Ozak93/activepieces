@@ -10,7 +10,7 @@ export const sendMessage = createAction({
             displayName: "Authentication",
             description: `
             To obtain access token & Home server:
-            
+
             1. Log in to the account you want to get the access token for on Element.
             2. Click on the name in the top left corner of the screen, then select "Settings" from the dropdown menu.
             3. In the Settings dialog, click the "Help & About" tab on the left side of the screen.
@@ -28,6 +28,9 @@ export const sendMessage = createAction({
                 })
             },
             required: true,
+            validate() {
+                return
+            },
         }),
         room_alias: Property.ShortText({
             displayName: "Room Alias",

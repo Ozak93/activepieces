@@ -54,7 +54,10 @@ export const runQuery = createAction({
                     required: false,
                 }),
             },
-            required: true
+            required: true,
+            validate() {
+                return
+            },
         }),
         query: Property.ShortText({
             displayName: 'Query',

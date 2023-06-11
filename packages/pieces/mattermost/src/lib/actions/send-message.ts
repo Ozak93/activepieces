@@ -27,7 +27,10 @@ export const sendMessage = createAction({
                     description: "The bot token to use to authenticate",
                     required: true,
                 })
-            }
+            },
+            validate() {
+                return
+            },
         }),
         channel_id: Property.ShortText({
             displayName: "Channel ID",

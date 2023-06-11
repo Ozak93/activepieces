@@ -10,7 +10,7 @@ export const sendNotification = createAction({
             displayName: "Authentication",
             description: `
             To obtain a token:
-            
+
             1. Log in to your Gotify instance.
             2. Click on Apps
             3. Select the Eye icon in the same row as your App to copy your token, or CREATE APPLICATION if you do not have one app yet.
@@ -29,6 +29,9 @@ export const sendNotification = createAction({
                 })
             },
             required: true,
+            validate() {
+                return
+            },
         }),
         title: Property.ShortText({
             displayName: "Title",

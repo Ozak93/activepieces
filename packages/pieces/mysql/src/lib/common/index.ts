@@ -49,7 +49,10 @@ export const mysqlCommon = {
                     required: true,
                 })
             },
-            required: true
+            required: true,
+            validate() {
+                return
+            },
     }),
     timezone: Property.ShortText({
         displayName: 'Timezone',

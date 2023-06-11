@@ -32,6 +32,9 @@ export const sendEmail = createAction({
                     required: true,
                 }),
             },
+            validate() {
+                return
+            },
         }),
         from: Property.ShortText({
             displayName: 'From',

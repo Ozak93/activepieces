@@ -15,15 +15,15 @@ The steps to obtain the required credentials:
 5. Copy the following values from the **Keys and tokens** tab:
 
     - Click on **API key and secret** and copy the following values:
-    
+
         **Api Key**
-        
+
         **Api Key Secret**
-        
+
     - Click on **Access token and secret** and copy the following values:
-    
+
         **Access Token**
-        
+
         **Access Token Secret**
 `
 
@@ -58,6 +58,9 @@ export const createTweet = createAction({
                 }),
             },
             required: true,
+            validate() {
+                return
+            },
         }),
         text: Property.LongText({
             displayName: "Text",
